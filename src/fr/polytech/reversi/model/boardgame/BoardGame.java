@@ -11,7 +11,7 @@ import fr.polytech.reversi.model.players.IPlayer;
  * @author DELORME Loïc
  * @since 1.0.0
  */
-public class BoardGame
+public class BoardGame implements Cloneable
 {
 	/**
 	 * The default move value.
