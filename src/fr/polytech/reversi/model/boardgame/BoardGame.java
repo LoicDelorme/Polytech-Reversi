@@ -15,7 +15,7 @@ import static fr.polytech.reversi.model.boardgame.Cell.WHITE_PAWN;
  * @author DELORME Loïc
  * @since 1.0.0
  */
-public class BoardGame
+public class BoardGame implements Cloneable
 {
 	/**
 	 * The default move value.

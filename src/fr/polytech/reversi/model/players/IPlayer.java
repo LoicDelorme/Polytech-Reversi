@@ -1,5 +1,6 @@
 package fr.polytech.reversi.model.players;
 
+import fr.polytech.reversi.model.boardgame.BoardGame;
 import fr.polytech.reversi.model.boardgame.Position;
 import fr.polytech.reversi.model.game.Color;
 
@@ -14,9 +15,12 @@ public interface IPlayer
 	/**
 	 * Get the next choice.
 	 * 
+	 * @param boardGame
+	 *            The board game.
+	 * 
 	 * @return The next choice.
 	 */
-	public Position getNextChoice();
+	public Position getNextChoice(BoardGame boardGame);
 
 	/**
 	 * Get the player type.

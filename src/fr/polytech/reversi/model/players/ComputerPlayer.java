@@ -1,5 +1,6 @@
 package fr.polytech.reversi.model.players;
 
+import fr.polytech.reversi.model.boardgame.BoardGame;
 import fr.polytech.reversi.model.boardgame.Position;
 import fr.polytech.reversi.model.game.Color;
 
@@ -28,10 +29,10 @@ public class ComputerPlayer implements IPlayer
 	}
 
 	/**
-	 * @see fr.polytech.reversi.model.players.IPlayer#getNextChoice()
+	 * @see fr.polytech.reversi.model.players.IPlayer#getNextChoice(fr.polytech.reversi.model.boardgame.BoardGame)
 	 */
 	@Override
-	public Position getNextChoice()
+	public Position getNextChoice(BoardGame boardGame)
 	{
 		// TODO Auto-generated method stub
 		return null;
