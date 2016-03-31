@@ -3,7 +3,6 @@ package fr.polytech.reversi.model.boardgame;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.polytech.reversi.model.game.Color;
 import fr.polytech.reversi.model.players.IPlayer;
 
 /**
@@ -75,6 +74,11 @@ public class BoardGame implements Cloneable
 
 		this.moves.put(playerOne, DEFAULT_MOVE_VALUE);
 		this.moves.put(playerTwo, DEFAULT_MOVE_VALUE);
+	}
+
+	public void markCell(Position positionToMark)
+	{
+
 	}
 
 	/**

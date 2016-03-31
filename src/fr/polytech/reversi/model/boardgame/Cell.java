@@ -1,7 +1,5 @@
 package fr.polytech.reversi.model.boardgame;
 
-import fr.polytech.reversi.model.game.Color;
-
 /**
  * This enumeration represents the available cells' values (Empty, White Pawn, Black Pawn).
  *
