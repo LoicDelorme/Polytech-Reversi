@@ -6,9 +6,6 @@ import java.util.Map;
 import fr.polytech.reversi.model.game.Color;
 import fr.polytech.reversi.model.players.IPlayer;
 
-import static fr.polytech.reversi.model.boardgame.Cell.BLACK_PAWN;
-import static fr.polytech.reversi.model.boardgame.Cell.WHITE_PAWN;
-
 /**
  * This class represents a board game.
  *
@@ -80,21 +77,29 @@ public class BoardGame implements Cloneable
 		this.moves.put(playerTwo, DEFAULT_MOVE_VALUE);
 	}
 
-	public int getNbCellsOfColor(Color color){
+	/**
+	 * Get the number of cells by a specific color.
+	 * 
+	 * @param color
+	 *            The specific color.
+	 * @return The number of cells corresponding to the color.
+	 */
+	public int getNbCellsByColor(Color color)
+	{
+		final Cell cellColor = Cell.getCellByColor(color);
 		int nbCells = 0;
 
-		for(int x = 0; x < boardGame.length; x ++){
-			for(int y = 0; y < boardGame[0].length; y ++){
-				if (boardGame[x][y] == WHITE_PAWN && color == Color.WHITE){
-					nbCells ++;
-				}
-				else if (boardGame[x][y] == BLACK_PAWN && color == Color.BLACK){
-					nbCells ++;
+		for (int x = 0; x < this.boardGame.length; x++)
+		{
+			for (int y = 0; y < this.boardGame[0].length; y++)
+			{
+				if (this.boardGame[x][y] == cellColor)
+				{
+					nbCells++;
 				}
 			}
 		}
 
 		return nbCells;
 	}
-
 }
