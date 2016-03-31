@@ -1,4 +1,4 @@
-package fr.polytech.reversi.model.game;
+package fr.polytech.reversi.model.boardgame;
 
 /**
  * This enumeration represents the player color (White or Black).

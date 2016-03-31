@@ -1,8 +1,8 @@
 package fr.polytech.reversi.model.players;
 
 import fr.polytech.reversi.model.boardgame.BoardGame;
+import fr.polytech.reversi.model.boardgame.Color;
 import fr.polytech.reversi.model.boardgame.Position;
-import fr.polytech.reversi.model.game.Color;
 
 /**
  * This interface represents a player.
