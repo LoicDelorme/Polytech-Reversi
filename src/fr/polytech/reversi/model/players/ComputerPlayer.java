@@ -34,7 +34,7 @@ public class ComputerPlayer implements IPlayer
 	@Override
 	public Position getNextChoice(BoardGame boardGame)
 	{
-		// TODO Auto-generated method stub
+		// TODO Calculate next choice.
 		return null;
 	}
 
