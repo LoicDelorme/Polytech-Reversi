@@ -11,17 +11,43 @@ public enum Cell
     /**
      * The cell is empty.
      */
-	EMPTY,
+	EMPTY(""),
 
 	/**
 	 * The cell is a white pawn.
 	 */
-	WHITE_PAWN,
+	WHITE_PAWN(""),
 
 	/**
 	 * The cell is a black pawn.
 	 */
-	BLACK_PAWN;
+	BLACK_PAWN("");
+
+	/**
+	 * The image path.
+	 */
+	private final String imagePath;
+
+	/**
+	 * Private constructor.
+	 * 
+	 * @param imagePath
+	 *            The image path.
+	 */
+	private Cell(String imagePath)
+	{
+		this.imagePath = imagePath;
+	}
+
+	/**
+	 * Get the image path.
+	 * 
+	 * @return The image path.
+	 */
+	public String getImagePath()
+	{
+		return this.imagePath;
+	}
 
 	/**
 	 * Get a cell representation using a color value.
