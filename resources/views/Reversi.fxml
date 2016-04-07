@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.*?>
-<?import javafx.scene.shape.*?>
-
+<?import javafx.scene.text.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <top>
@@ -30,7 +28,7 @@
       </MenuBar>
    </top>
    <center>
-      <GridPane gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="GRID_PANE" gridLinesVisible="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -62,28 +60,47 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Label text="Reversi">
+                              <Label fx:id="GAME_NAME" text="Reversi">
                                  <font>
                                     <Font size="32.0" />
                                  </font>
                               </Label>
-                              <Label text="version 1.0" />
+                              <Label fx:id="VERSION" text="\$VERSION_TEXT" />
                            </children>
                         </VBox>
-                        <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <Region prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Label text="Scores :" textAlignment="CENTER">
+                              <Label fx:id="SCORES_HEADER" text="Scores :" textAlignment="CENTER">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
                               </Label>
-                              <Label text="Joueur 1">
+                              <Label fx:id="PLAYER_1_SCORE" text="\$PLAYER_1_SCORE">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <Label prefHeight="0.0" prefWidth="68.0" text="Joueur 2">
+                              <Label fx:id="PLAYER_2_SCORE" alignment="CENTER" contentDisplay="CENTER" text="\$PLAYER_2_SCORE" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="MOVES_HEADER" text="Coups :" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="PLAYER_1_MOVES" text="\$PLAYER_1_MOVES">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="PLAYER_2_MOVES" alignment="CENTER" contentDisplay="CENTER" text="\$PLAYER_2_MOVES">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -106,8 +123,15 @@
    <bottom>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="47.0" prefWidth="366.0" text="© 2016 - Loic DELORME, Nicolas KASPRZYK &amp; Grégoire PIAT" textAlignment="CENTER" wrapText="true" />
+            <Label fx:id="COPYRIGHT" prefHeight="47.0" prefWidth="366.0" text="© 2016 - Loic DELORME, Nicolas KASPRZYK &amp; Grégoire PIAT" textAlignment="CENTER" wrapText="true" />
          </children>
       </HBox>
    </bottom>
+   <right>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </right>
 </BorderPane>
