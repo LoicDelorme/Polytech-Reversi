@@ -1,4 +1,4 @@
-package fr.polytech.reversi.view;
+package fr.polytech.reversi;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
