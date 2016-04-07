@@ -34,7 +34,6 @@ public class HumanPlayer implements IPlayer
 	@Override
 	public Position getNextChoice(BoardGame boardGame)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
