@@ -30,7 +30,7 @@ public enum Cell
 	 *            The color value.
 	 * @return The corresponding cell value.
 	 */
-	public static Cell getCellByColor(Color color)
+	public static Cell getCellRepresentationByColor(Color color)
 	{
 		if (Color.WHITE == color)
 		{
