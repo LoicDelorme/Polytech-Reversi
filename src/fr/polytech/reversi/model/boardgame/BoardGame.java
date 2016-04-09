@@ -1,6 +1,8 @@
 package fr.polytech.reversi.model.boardgame;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.polytech.reversi.model.boardgame.exceptions.AlreadyMarkedCellBoardGameException;
@@ -15,7 +17,7 @@ import fr.polytech.reversi.view.IView;
  * @author DELORME Loïc
  * @since 1.0.0
  */
-public class BoardGame implements Cloneable
+public class BoardGame
 {
 	/**
 	 * The default move value.
@@ -92,12 +94,17 @@ public class BoardGame implements Cloneable
 			}
 		}
 
+		this.boardGame[3][3] = Cell.WHITE_PAWN;
+		this.boardGame[4][4] = Cell.WHITE_PAWN;
+		this.boardGame[3][4] = Cell.BLACK_PAWN;
+		this.boardGame[4][3] = Cell.BLACK_PAWN;
+
 		this.currentPlayer = playerOne;
 
 		this.moves.put(playerOne, DEFAULT_MOVE_VALUE);
 		this.moves.put(playerTwo, DEFAULT_MOVE_VALUE);
 
-		this.reversiView.notifyResetScoreBoard();
+		this.reversiView.notifyUpdateBoardGame(this);
 	}
 
 	/**
@@ -110,24 +117,16 @@ public class BoardGame implements Cloneable
 	 */
 	public void markCell(Position position) throws BoardGameException
 	{
-		final int x = position.getX();
-		final int y = position.getY();
-
-		checkMoveIsLegal(x, y);
-		applyMove(x, y);
-
+		checkMoveIsLegal(position.getX(), position.getY());
+		applyMove(position.getX(), position.getY());
 		this.moves.put(this.currentPlayer, this.moves.get(this.currentPlayer) + 1);
 		this.currentPlayer = (this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
 
-		try
-		{
-			this.reversiView.notifyUpdateBoardGameRepresentation((BoardGame) this.clone());
-		}
-		catch (CloneNotSupportedException e)
-		{
-			// Can't appear.
-			e.printStackTrace();
-		}
+		this.reversiView.notifyUpdateBoardGame(this);
+		this.reversiView.notifyUpdateScore(1, getNbCellsByColor(this.playerOne.getPlayerColor()));
+		this.reversiView.notifyUpdateScore(2, getNbCellsByColor(this.playerTwo.getPlayerColor()));
+		this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
+		this.reversiView.notifyUpdateMoves(2, this.moves.get(this.playerTwo));
 	}
 
 	/**
@@ -256,6 +255,7 @@ public class BoardGame implements Cloneable
 	private void applyMove(int x, int y)
 	{
 		final Cell playerPawn = Cell.getCellRepresentationByColor(this.currentPlayer.getPlayerColor());
+		final List<Position> positionsToFlip = new ArrayList<Position>();
 		int xTemp;
 		int yTemp;
 		Cell currentPawn;
@@ -286,13 +286,20 @@ public class BoardGame implements Cloneable
 
 				if (currentPawn != playerPawn)
 				{
-					this.boardGame[xTemp][yTemp] = playerPawn;
+					positionsToFlip.add(new Position(xTemp, yTemp));
 				}
 				else
 				{
+					for (Position currentPosition : positionsToFlip)
+					{
+						this.boardGame[currentPosition.getX()][currentPosition.getY()] = playerPawn;
+					}
+
 					break;
 				}
 			}
+
+			positionsToFlip.clear();
 		}
 	}
 
@@ -303,7 +310,7 @@ public class BoardGame implements Cloneable
 	 *            The specific color.
 	 * @return The number of cells corresponding to the color.
 	 */
-	public int getNbCellsByColor(Color color)
+	private int getNbCellsByColor(Color color)
 	{
 		final Cell cellColor = Cell.getCellRepresentationByColor(color);
 		int nbCells = 0;
@@ -320,5 +327,15 @@ public class BoardGame implements Cloneable
 		}
 
 		return nbCells;
+	}
+
+	/**
+	 * Get the board game.
+	 * 
+	 * @return The board game.
+	 */
+	public Cell[][] getBoardGame()
+	{
+		return this.boardGame.clone();
 	}
 }

@@ -11,17 +11,17 @@ public enum Cell
     /**
      * The cell is empty.
      */
-	EMPTY("resources/images/invisible_pawn.png"),
+	EMPTY("/fr/polytech/reversi/view/resources/images/invisible_pawn.png"),
 
 	/**
 	 * The cell is a white pawn.
 	 */
-	WHITE_PAWN("resources/images/white_pawn.png"),
+	WHITE_PAWN("/fr/polytech/reversi/view/resources/images/white_pawn.png"),
 
 	/**
 	 * The cell is a black pawn.
 	 */
-	BLACK_PAWN("resources/images/black_pawn.png");
+	BLACK_PAWN("/fr/polytech/reversi/view/resources/images/black_pawn.png");
 
 	/**
 	 * The image path.

@@ -11,15 +11,30 @@ import fr.polytech.reversi.model.boardgame.BoardGame;
 public interface IView
 {
 	/**
-	 * Notify the view to update the board game representation.
+	 * Notify the view to update the board game.
 	 * 
 	 * @param boardGame
 	 *            The board game.
 	 */
-	public void notifyUpdateBoardGameRepresentation(BoardGame boardGame);
+	public void notifyUpdateBoardGame(BoardGame boardGame);
 
 	/**
-	 * Notify the view to reset the score board.
+	 * Notify the view to update the score.
+	 * 
+	 * @param playerNumber
+	 *            The player number.
+	 * @param score
+	 *            The score.
 	 */
-	public void notifyResetScoreBoard();
+	public void notifyUpdateScore(int playerNumber, int score);
+
+	/**
+	 * Notify the view to update the moves.
+	 * 
+	 * @param playerNumber
+	 *            The player number.
+	 * @param moves
+	 *            The moves.
+	 */
+	public void notifyUpdateMoves(int playerNumber, int moves);
 }
