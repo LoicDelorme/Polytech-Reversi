@@ -1,7 +1,7 @@
 package fr.polytech.reversi.model.players;
 
 import fr.polytech.reversi.model.boardgame.BoardGame;
-import fr.polytech.reversi.model.boardgame.Color;
+import fr.polytech.reversi.model.boardgame.Cell;
 import fr.polytech.reversi.model.boardgame.Position;
 
 /**
@@ -13,19 +13,19 @@ import fr.polytech.reversi.model.boardgame.Position;
 public class HumanPlayer implements IPlayer
 {
 	/**
-	 * The player color.
+	 * The cell representation.
 	 */
-	private final Color color;
+	private final Cell cellRepresentation;
 
 	/**
 	 * Create a human player.
 	 * 
-	 * @param color
-	 *            The human color.
+	 * @param cellRepresentation
+	 *            The cell representation.
 	 */
-	public HumanPlayer(Color color)
+	public HumanPlayer(Cell cellRepresentation)
 	{
-		this.color = color;
+		this.cellRepresentation = cellRepresentation;
 	}
 
 	/**
@@ -47,11 +47,11 @@ public class HumanPlayer implements IPlayer
 	}
 
 	/**
-	 * @see fr.polytech.reversi.model.players.IPlayer#getPlayerColor()
+	 * @see fr.polytech.reversi.model.players.IPlayer#getCellRepresentation()
 	 */
 	@Override
-	public Color getPlayerColor()
+	public Cell getCellRepresentation()
 	{
-		return this.color;
+		return this.cellRepresentation;
 	}
 }

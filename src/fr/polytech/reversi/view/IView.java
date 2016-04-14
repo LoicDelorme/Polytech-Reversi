@@ -37,4 +37,20 @@ public interface IView
 	 *            The moves.
 	 */
 	public void notifyUpdateMoves(int playerNumber, int moves);
+
+	/**
+	 * Notify the view with a message.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public void notifyMessage(String message);
+
+	/**
+	 * Notify the view the current player.
+	 * 
+	 * @param representation
+	 *            The player representation.
+	 */
+	public void notifyCurrentPlayer(int representation);
 }

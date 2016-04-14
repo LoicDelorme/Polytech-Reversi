@@ -1,7 +1,7 @@
 package fr.polytech.reversi.model.players;
 
 import fr.polytech.reversi.model.boardgame.BoardGame;
-import fr.polytech.reversi.model.boardgame.Color;
+import fr.polytech.reversi.model.boardgame.Cell;
 import fr.polytech.reversi.model.boardgame.Position;
 
 /**
@@ -30,9 +30,9 @@ public interface IPlayer
 	public PlayerType getPlayerType();
 
 	/**
-	 * Get the player color.
+	 * Get the cell representation.
 	 * 
-	 * @return The player color.
+	 * @return The cell representation.
 	 */
-	public Color getPlayerColor();
+	public Cell getCellRepresentation();
 }

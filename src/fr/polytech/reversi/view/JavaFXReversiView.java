@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 /**
@@ -32,7 +33,7 @@ public class JavaFXReversiView implements IView, Initializable
 	/**
 	 * The version text.
 	 */
-	private static final String VERSION_TEXT = "version 0.7";
+	private static final String VERSION_TEXT = "version 1.0";
 
 	/**
 	 * The board game.
@@ -71,6 +72,24 @@ public class JavaFXReversiView implements IView, Initializable
 	private Label playerTwoMoves;
 
 	/**
+	 * The player one HBox.
+	 */
+	@FXML
+	private HBox playerOneHBox;
+
+	/**
+	 * The player two HBox.
+	 */
+	@FXML
+	private HBox playerTwoHBox;
+
+	/**
+	 * The message.
+	 */
+	@FXML
+	private Label message;
+
+	/**
 	 * @see fr.polytech.reversi.view.IView#notifyUpdateBoardGame(fr.polytech.reversi.model.boardgame.BoardGame)
 	 */
 	@Override
@@ -88,11 +107,14 @@ public class JavaFXReversiView implements IView, Initializable
 				final int xTemp = x;
 				final int yTemp = y;
 
-				final Cell currentCell = boardGameRepresentation[xTemp][yTemp];
-				final ImageView imageView = new ImageView(currentCell.getImagePath());
+				final Cell cell = boardGameRepresentation[xTemp][yTemp];
+				final ImageView imageView = new ImageView(cell.getImagePath());
 				final Pane imagePane = new Pane(imageView);
 
-				if (currentCell == Cell.EMPTY)
+				imageView.fitWidthProperty().bind(imagePane.widthProperty());
+				imageView.fitHeightProperty().bind(imagePane.heightProperty());
+
+				if (cell == Cell.EMPTY)
 				{
 					imagePane.setOnMouseClicked(e ->
 					{
@@ -161,5 +183,33 @@ public class JavaFXReversiView implements IView, Initializable
 		this.playerTwoScore.setText(String.format(PLAYER_TEXT, 2, 0));
 		this.playerOneMoves.setText(String.format(PLAYER_TEXT, 1, 0));
 		this.playerTwoMoves.setText(String.format(PLAYER_TEXT, 2, 0));
+		this.message.setText("Aucun message");
+	}
+
+	/**
+	 * @see fr.polytech.reversi.view.IView#notifyMessage(java.lang.String)
+	 */
+	@Override
+	public void notifyMessage(String message)
+	{
+		this.message.setText(message);
+	}
+
+	/**
+	 * @see fr.polytech.reversi.view.IView#notifyCurrentPlayer(int)
+	 */
+	@Override
+	public void notifyCurrentPlayer(int representation)
+	{
+		if (representation == 1)
+		{
+			this.playerOneHBox.setOpacity(1.0);
+			this.playerTwoHBox.setOpacity(0.3);
+		}
+		else
+		{
+			this.playerOneHBox.setOpacity(0.3);
+			this.playerTwoHBox.setOpacity(1.0);
+		}
 	}
 }

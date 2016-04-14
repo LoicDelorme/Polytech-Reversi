@@ -9,6 +9,7 @@ import fr.polytech.reversi.model.boardgame.exceptions.AlreadyMarkedCellBoardGame
 import fr.polytech.reversi.model.boardgame.exceptions.BoardGameException;
 import fr.polytech.reversi.model.boardgame.exceptions.InvalidMoveBoardGameException;
 import fr.polytech.reversi.model.players.IPlayer;
+import fr.polytech.reversi.model.players.PlayerType;
 import fr.polytech.reversi.view.IView;
 
 /**
@@ -17,7 +18,7 @@ import fr.polytech.reversi.view.IView;
  * @author DELORME Loïc
  * @since 1.0.0
  */
-public class BoardGame
+public class BoardGame implements Cloneable
 {
 	/**
 	 * The default move value.
@@ -38,6 +39,11 @@ public class BoardGame
 	 * The board game.
 	 */
 	private final Cell[][] boardGame;
+
+	/**
+	 * The number of cells remaining.
+	 */
+	private int nbCellsRemaining;
 
 	/**
 	 * The player one.
@@ -81,30 +87,60 @@ public class BoardGame
 	public BoardGame(int width, int height, IPlayer playerOne, IPlayer playerTwo, IView reversiView)
 	{
 		this.boardGame = new Cell[width][height];
+		this.nbCellsRemaining = width * height - 4;
 		this.playerOne = playerOne;
 		this.playerTwo = playerTwo;
 		this.moves = new HashMap<IPlayer, Integer>();
 		this.reversiView = reversiView;
+	}
 
-		for (int x = 0; x < width; x++)
+	/**
+	 * Init the board game.
+	 */
+	public void init()
+	{
+		for (int x = 0; x < this.boardGame.length; x++)
 		{
-			for (int y = 0; y < height; y++)
+			for (int y = 0; y < this.boardGame[0].length; y++)
 			{
 				this.boardGame[x][y] = Cell.EMPTY;
 			}
 		}
 
 		this.boardGame[3][3] = Cell.WHITE_PAWN;
-		this.boardGame[4][4] = Cell.WHITE_PAWN;
 		this.boardGame[3][4] = Cell.BLACK_PAWN;
 		this.boardGame[4][3] = Cell.BLACK_PAWN;
+		this.boardGame[4][4] = Cell.WHITE_PAWN;
 
-		this.currentPlayer = playerOne;
+		this.moves.put(this.playerOne, DEFAULT_MOVE_VALUE);
+		this.moves.put(this.playerTwo, DEFAULT_MOVE_VALUE);
 
-		this.moves.put(playerOne, DEFAULT_MOVE_VALUE);
-		this.moves.put(playerTwo, DEFAULT_MOVE_VALUE);
+		try
+		{
+			updateCurrentPlayer();
+			this.reversiView.notifyUpdateBoardGame((BoardGame) this.clone());
+		}
+		catch (CloneNotSupportedException e)
+		{
+			// can't appear.
+		}
+	}
 
-		this.reversiView.notifyUpdateBoardGame(this);
+	/**
+	 * Update the current player.
+	 */
+	private void updateCurrentPlayer()
+	{
+		if (this.currentPlayer != null)
+		{
+			this.currentPlayer = (this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
+		}
+		else
+		{
+			this.currentPlayer = this.playerOne;
+		}
+
+		this.reversiView.notifyCurrentPlayer(this.currentPlayer == this.playerOne ? 1 : 2);
 	}
 
 	/**
@@ -119,14 +155,57 @@ public class BoardGame
 	{
 		checkMoveIsLegal(position.getX(), position.getY());
 		applyMove(position.getX(), position.getY());
+		this.nbCellsRemaining--;
 		this.moves.put(this.currentPlayer, this.moves.get(this.currentPlayer) + 1);
-		this.currentPlayer = (this.currentPlayer == this.playerOne ? this.playerTwo : this.playerOne);
 
-		this.reversiView.notifyUpdateBoardGame(this);
-		this.reversiView.notifyUpdateScore(1, getNbCellsByColor(this.playerOne.getPlayerColor()));
-		this.reversiView.notifyUpdateScore(2, getNbCellsByColor(this.playerTwo.getPlayerColor()));
-		this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
-		this.reversiView.notifyUpdateMoves(2, this.moves.get(this.playerTwo));
+		try
+		{
+			updateCurrentPlayer();
+			this.reversiView.notifyUpdateBoardGame((BoardGame) this.clone());
+			this.reversiView.notifyUpdateScore(1, getNbCellsByPawn(this.playerOne.getCellRepresentation()));
+			this.reversiView.notifyUpdateScore(2, getNbCellsByPawn(this.playerTwo.getCellRepresentation()));
+			this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
+			this.reversiView.notifyUpdateMoves(2, this.moves.get(this.playerTwo));
+		}
+		catch (CloneNotSupportedException e)
+		{
+			// can't appear.
+		}
+
+		final int playerOneScore = getNbCellsByPawn(this.playerOne.getCellRepresentation());
+		final int playerTwoScore = getNbCellsByPawn(this.playerTwo.getCellRepresentation());
+		if (areAllCellsMarked() || (playerOneScore == 0) || (playerTwoScore == 0))
+		{
+			String computedMessage = null;
+			if (playerOneScore == playerTwoScore)
+			{
+				computedMessage = String.format("Egalité entre les joueurs avec %d pions chacun", playerOneScore);
+			}
+			else
+			{
+				computedMessage = String.format("Joueur %d gagne avec %d pions", (playerOneScore > playerTwoScore ? 1 : 2), (playerOneScore > playerTwoScore ? playerOneScore : playerTwoScore));
+			}
+
+			this.reversiView.notifyMessage(computedMessage);
+			return;
+		}
+
+		if (!currentPlayerCanPlay())
+		{
+			this.reversiView.notifyMessage(String.format("Joueur %d ne peut pas jouer...", (this.currentPlayer == this.playerOne ? 1 : 2)));
+			updateCurrentPlayer();
+		}
+		if (this.currentPlayer.getPlayerType() == PlayerType.COMPUTER)
+		{
+			try
+			{
+				markCell(this.currentPlayer.getNextChoice((BoardGame) this.clone()));
+			}
+			catch (CloneNotSupportedException e)
+			{
+				// can't appear.
+			}
+		}
 	}
 
 	/**
@@ -196,11 +275,12 @@ public class BoardGame
 	 */
 	private boolean moveCanBePlayed(int x, int y)
 	{
-		final Cell playerPawn = Cell.getCellRepresentationByColor(this.currentPlayer.getPlayerColor());
+		final Cell playerPawn = this.currentPlayer.getCellRepresentation();
+		Cell currentPawn = null;
+
 		boolean sawOther;
 		int xTemp;
 		int yTemp;
-		Cell currentPawn;
 
 		for (int ii = 0; ii < DX.length; ii++)
 		{
@@ -254,11 +334,12 @@ public class BoardGame
 	 */
 	private void applyMove(int x, int y)
 	{
-		final Cell playerPawn = Cell.getCellRepresentationByColor(this.currentPlayer.getPlayerColor());
+		final Cell playerPawn = this.currentPlayer.getCellRepresentation();
+		Cell currentPawn;
+
 		final List<Position> positionsToFlip = new ArrayList<Position>();
 		int xTemp;
 		int yTemp;
-		Cell currentPawn;
 
 		this.boardGame[x][y] = playerPawn;
 
@@ -304,22 +385,57 @@ public class BoardGame
 	}
 
 	/**
-	 * Get the number of cells for a specific color.
+	 * Check if all cells are marked.
 	 * 
-	 * @param color
-	 *            The specific color.
-	 * @return The number of cells corresponding to the color.
+	 * @return True or False.
 	 */
-	private int getNbCellsByColor(Color color)
+	private boolean areAllCellsMarked()
 	{
-		final Cell cellColor = Cell.getCellRepresentationByColor(color);
-		int nbCells = 0;
+		return this.nbCellsRemaining == 0;
+	}
 
+	/**
+	 * Check that the current player can play.
+	 * 
+	 * @return True or False.
+	 */
+	private boolean currentPlayerCanPlay()
+	{
+		final List<Position> availablePositions = new ArrayList<Position>();
 		for (int x = 0; x < this.boardGame.length; x++)
 		{
 			for (int y = 0; y < this.boardGame[0].length; y++)
 			{
-				if (this.boardGame[x][y] == cellColor)
+				try
+				{
+					checkMoveIsLegal(x, y);
+					availablePositions.add(new Position(x, y));
+				}
+				catch (BoardGameException e)
+				{
+					// Nothing.
+				}
+			}
+		}
+
+		return !availablePositions.isEmpty();
+	}
+
+	/**
+	 * Get the number of cells for a specific pawn.
+	 * 
+	 * @param pawn
+	 *            The specific pawn.
+	 * @return The number of cells corresponding to the spawn.
+	 */
+	private int getNbCellsByPawn(Cell pawn)
+	{
+		int nbCells = 0;
+		for (int x = 0; x < this.boardGame.length; x++)
+		{
+			for (int y = 0; y < this.boardGame[0].length; y++)
+			{
+				if (this.boardGame[x][y] == pawn)
 				{
 					nbCells++;
 				}
@@ -336,6 +452,6 @@ public class BoardGame
 	 */
 	public Cell[][] getBoardGame()
 	{
-		return this.boardGame.clone();
+		return this.boardGame;
 	}
 }

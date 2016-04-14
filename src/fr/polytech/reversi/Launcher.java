@@ -3,7 +3,7 @@ package fr.polytech.reversi;
 import java.io.IOException;
 
 import fr.polytech.reversi.model.boardgame.BoardGame;
-import fr.polytech.reversi.model.boardgame.Color;
+import fr.polytech.reversi.model.boardgame.Cell;
 import fr.polytech.reversi.model.players.HumanPlayer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +24,8 @@ public class Launcher extends Application
 	{
 		final FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fr/polytech/reversi/view/resources/views/Reversi.fxml"));
 		final Parent root = loader.load();
-		final BoardGame boardGame = new BoardGame(8, 8, new HumanPlayer(Color.BLACK), new HumanPlayer(Color.WHITE), loader.getController());
+		final BoardGame boardGame = new BoardGame(8, 8, new HumanPlayer(Cell.BLACK_PAWN), new HumanPlayer(Cell.WHITE_PAWN), loader.getController());
+		boardGame.init();
 
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setResizable(false);

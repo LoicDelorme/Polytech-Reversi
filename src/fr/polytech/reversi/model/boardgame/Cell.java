@@ -48,26 +48,4 @@ public enum Cell
 	{
 		return this.imagePath;
 	}
-
-	/**
-	 * Get a cell representation using a color value.
-	 * 
-	 * @param color
-	 *            The color value.
-	 * @return The corresponding cell value.
-	 */
-	public static Cell getCellRepresentationByColor(Color color)
-	{
-		if (Color.WHITE == color)
-		{
-			return WHITE_PAWN;
-		}
-
-		if (Color.BLACK == color)
-		{
-			return BLACK_PAWN;
-		}
-
-		return EMPTY;
-	}
 }
