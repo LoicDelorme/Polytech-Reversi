@@ -18,7 +18,7 @@ import fr.polytech.reversi.view.IView;
  * @author DELORME Loïc
  * @since 1.0.0
  */
-public class BoardGame implements Cloneable
+public class BoardGame
 {
 	/**
 	 * The default move value.
@@ -115,15 +115,8 @@ public class BoardGame implements Cloneable
 		this.moves.put(this.playerOne, DEFAULT_MOVE_VALUE);
 		this.moves.put(this.playerTwo, DEFAULT_MOVE_VALUE);
 
-		try
-		{
-			updateCurrentPlayer();
-			this.reversiView.notifyUpdateBoardGame((BoardGame) this.clone());
-		}
-		catch (CloneNotSupportedException e)
-		{
-			// can't appear.
-		}
+		updateCurrentPlayer();
+		this.reversiView.notifyUpdateBoardGame(this);
 	}
 
 	/**
@@ -158,19 +151,12 @@ public class BoardGame implements Cloneable
 		this.nbCellsRemaining--;
 		this.moves.put(this.currentPlayer, this.moves.get(this.currentPlayer) + 1);
 
-		try
-		{
-			updateCurrentPlayer();
-			this.reversiView.notifyUpdateBoardGame((BoardGame) this.clone());
-			this.reversiView.notifyUpdateScore(1, getNbCellsByPawn(this.playerOne.getCellRepresentation()));
-			this.reversiView.notifyUpdateScore(2, getNbCellsByPawn(this.playerTwo.getCellRepresentation()));
-			this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
-			this.reversiView.notifyUpdateMoves(2, this.moves.get(this.playerTwo));
-		}
-		catch (CloneNotSupportedException e)
-		{
-			// can't appear.
-		}
+		this.reversiView.notifyUpdateBoardGame(this);
+		updateCurrentPlayer();
+		this.reversiView.notifyUpdateScore(1, getNbCellsByPawn(this.playerOne.getCellRepresentation()));
+		this.reversiView.notifyUpdateScore(2, getNbCellsByPawn(this.playerTwo.getCellRepresentation()));
+		this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
+		this.reversiView.notifyUpdateMoves(2, this.moves.get(this.playerTwo));
 
 		final int playerOneScore = getNbCellsByPawn(this.playerOne.getCellRepresentation());
 		final int playerTwoScore = getNbCellsByPawn(this.playerTwo.getCellRepresentation());
@@ -195,16 +181,10 @@ public class BoardGame implements Cloneable
 			this.reversiView.notifyMessage(String.format("Joueur %d ne peut pas jouer...", (this.currentPlayer == this.playerOne ? 1 : 2)));
 			updateCurrentPlayer();
 		}
+
 		if (this.currentPlayer.getPlayerType() == PlayerType.COMPUTER)
 		{
-			try
-			{
-				markCell(this.currentPlayer.getNextChoice((BoardGame) this.clone()));
-			}
-			catch (CloneNotSupportedException e)
-			{
-				// can't appear.
-			}
+			markCell(this.currentPlayer.getNextChoice(this));
 		}
 	}
 
