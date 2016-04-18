@@ -95,6 +95,22 @@ public class BoardGame
 	}
 
 	/**
+	 * Create a board game.
+	 * 
+	 * @param boardGame
+	 *            An another board game.
+	 */
+	public BoardGame(BoardGame boardGame)
+	{
+		this.boardGame = boardGame.getBoardGame();
+		this.nbCellsRemaining = boardGame.getNbCellsRemaining();
+		this.playerOne = null;
+		this.playerTwo = null;
+		this.moves = null;
+		this.reversiView = null;
+	}
+
+	/**
 	 * Init the board game.
 	 */
 	public void init()
@@ -146,13 +162,13 @@ public class BoardGame
 	 */
 	public void markCell(Position position) throws BoardGameException
 	{
-		checkMoveIsLegal(position.getX(), position.getY());
-		applyMove(position.getX(), position.getY());
+		checkMoveIsLegal(position.getX(), position.getY(), this.currentPlayer.getCellRepresentation());
+		applyMove(position.getX(), position.getY(), this.currentPlayer.getCellRepresentation());
 		this.nbCellsRemaining--;
 		this.moves.put(this.currentPlayer, this.moves.get(this.currentPlayer) + 1);
 
-		this.reversiView.notifyUpdateBoardGame(this);
 		updateCurrentPlayer();
+		this.reversiView.notifyUpdateBoardGame(this);
 		this.reversiView.notifyUpdateScore(1, getNbCellsByPawn(this.playerOne.getCellRepresentation()));
 		this.reversiView.notifyUpdateScore(2, getNbCellsByPawn(this.playerTwo.getCellRepresentation()));
 		this.reversiView.notifyUpdateMoves(1, this.moves.get(this.playerOne));
@@ -176,7 +192,7 @@ public class BoardGame
 			return;
 		}
 
-		if (!currentPlayerCanPlay())
+		if (!playerCanPlay(this.currentPlayer.getCellRepresentation()))
 		{
 			this.reversiView.notifyMessage(String.format("Joueur %d ne peut pas jouer...", (this.currentPlayer == this.playerOne ? 1 : 2)));
 			updateCurrentPlayer();
@@ -184,7 +200,8 @@ public class BoardGame
 
 		if (this.currentPlayer.getPlayerType() == PlayerType.COMPUTER)
 		{
-			markCell(this.currentPlayer.getNextChoice(this));
+			final Position nextChoice = this.currentPlayer.getNextChoice(new BoardGame(this));
+			markCell(nextChoice);
 		}
 	}
 
@@ -195,10 +212,12 @@ public class BoardGame
 	 *            The x coordinate.
 	 * @param y
 	 *            The y coordinate.
+	 * @param playerPawn
+	 *            The player pawn.
 	 * @throws BoardGameException
 	 *             If an error occurred.
 	 */
-	public void checkMoveIsLegal(int x, int y) throws BoardGameException
+	public void checkMoveIsLegal(int x, int y, Cell playerPawn) throws BoardGameException
 	{
 		if (!isInBounds(x, y))
 		{
@@ -210,7 +229,7 @@ public class BoardGame
 			throw new AlreadyMarkedCellBoardGameException(x, y);
 		}
 
-		if (!moveCanBePlayed(x, y))
+		if (!moveCanBePlayed(x, y, playerPawn))
 		{
 			throw new InvalidMoveBoardGameException(x, y);
 		}
@@ -251,11 +270,12 @@ public class BoardGame
 	 *            The x coordinate.
 	 * @param y
 	 *            The y coordinate.
+	 * @param playerPawn
+	 *            The player pawn.
 	 * @return True or False.
 	 */
-	private boolean moveCanBePlayed(int x, int y)
+	private boolean moveCanBePlayed(int x, int y, Cell playerPawn)
 	{
-		final Cell playerPawn = this.currentPlayer.getCellRepresentation();
 		Cell currentPawn = null;
 
 		boolean sawOther;
@@ -311,10 +331,11 @@ public class BoardGame
 	 *            The x coordinate.
 	 * @param y
 	 *            The y coordinate.
+	 * @param playerPawn
+	 *            The player pawn.
 	 */
-	private void applyMove(int x, int y)
+	private void applyMove(int x, int y, Cell playerPawn)
 	{
-		final Cell playerPawn = this.currentPlayer.getCellRepresentation();
 		Cell currentPawn;
 
 		final List<Position> positionsToFlip = new ArrayList<Position>();
@@ -375,11 +396,14 @@ public class BoardGame
 	}
 
 	/**
-	 * Check that the current player can play.
+	 * Check that the player can play.
+	 * 
+	 * @param playerPawn
+	 *            The player pawn.
 	 * 
 	 * @return True or False.
 	 */
-	private boolean currentPlayerCanPlay()
+	public boolean playerCanPlay(Cell playerPawn)
 	{
 		final List<Position> availablePositions = new ArrayList<Position>();
 		for (int x = 0; x < this.boardGame.length; x++)
@@ -388,7 +412,7 @@ public class BoardGame
 			{
 				try
 				{
-					checkMoveIsLegal(x, y);
+					checkMoveIsLegal(x, y, playerPawn);
 					availablePositions.add(new Position(x, y));
 				}
 				catch (BoardGameException e)
@@ -408,7 +432,7 @@ public class BoardGame
 	 *            The specific pawn.
 	 * @return The number of cells corresponding to the spawn.
 	 */
-	private int getNbCellsByPawn(Cell pawn)
+	public int getNbCellsByPawn(Cell pawn)
 	{
 		int nbCells = 0;
 		for (int x = 0; x < this.boardGame.length; x++)
@@ -432,6 +456,72 @@ public class BoardGame
 	 */
 	public Cell[][] getBoardGame()
 	{
-		return this.boardGame;
+		return this.boardGame.clone();
 	}
+
+	/**
+	 * Get the number of cells remaining.
+	 * 
+	 * @return The number of cells remaining.
+	 */
+	private int getNbCellsRemaining()
+	{
+		return this.nbCellsRemaining;
+	}
+
+	/**
+	 * Get the current player.
+	 * 
+	 * @return The current player.
+	 */
+	public IPlayer getCurrentPlayer()
+	{
+		return this.currentPlayer;
+	}
+
+	/////////////////////////////////////////// USED FOR AI ///////////////////////////////////////////
+	/**
+	 * Check if the game is over.
+	 * 
+	 * @return True of False.
+	 */
+	public boolean gameOver()
+	{
+		return areAllCellsMarked() || !playerCanPlay(this.playerOne.getCellRepresentation()) || !playerCanPlay(this.playerTwo.getCellRepresentation());
+	}
+
+	/**
+	 * Mark a cell for AI.
+	 * 
+	 * @param position
+	 *            The position to mark.
+	 * @param playerPawn
+	 *            The player pawn.
+	 * @throws BoardGameException
+	 *             If an error occurred.
+	 */
+	public void markCellAI(Position position, Cell playerPawn) throws BoardGameException
+	{
+		checkMoveIsLegal(position.getX(), position.getY(), playerPawn);
+		applyMove(position.getX(), position.getY(), playerPawn);
+		this.nbCellsRemaining--;
+	}
+
+	/**
+	 * Reset the board game.
+	 * 
+	 * @param boardGame
+	 *            The board game.
+	 */
+	public void resetBoardGame(Cell[][] boardGame)
+	{
+		for (int x = 0; x < boardGame.length; x++)
+		{
+			for (int y = 0; y < boardGame[0].length; y++)
+			{
+				this.boardGame[x][y] = boardGame[x][y];
+			}
+		}
+	}
+	/////////////////////////////////////////// END ///////////////////////////////////////////
 }

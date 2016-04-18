@@ -9,7 +9,6 @@ import fr.polytech.reversi.model.boardgame.Position;
 import fr.polytech.reversi.model.boardgame.exceptions.BoardGameException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -95,11 +94,12 @@ public class JavaFXReversiView implements IView, Initializable
 	@Override
 	public void notifyUpdateBoardGame(BoardGame boardGame)
 	{
-		final Node gridRepresentation = this.boardGame.getChildren().get(0);
-		this.boardGame.getChildren().clear();
-		this.boardGame.getChildren().add(0, gridRepresentation);
+		this.boardGame.getChildren().remove(1, this.boardGame.getChildren().size());
 
 		final Cell[][] boardGameRepresentation = boardGame.getBoardGame();
+		final Cell currentPlayerPawn = boardGame.getCurrentPlayer().getCellRepresentation();
+		Cell currentCell;
+
 		for (int x = 0; x < boardGameRepresentation.length; x++)
 		{
 			for (int y = 0; y < boardGameRepresentation[0].length; y++)
@@ -107,14 +107,14 @@ public class JavaFXReversiView implements IView, Initializable
 				final int xTemp = x;
 				final int yTemp = y;
 
-				final Cell cell = boardGameRepresentation[xTemp][yTemp];
-				final ImageView imageView = new ImageView(cell.getImagePath());
+				currentCell = boardGameRepresentation[xTemp][yTemp];
+				final ImageView imageView = new ImageView(currentCell.getImagePath());
 				final Pane imagePane = new Pane(imageView);
 
 				imageView.fitWidthProperty().bind(imagePane.widthProperty());
 				imageView.fitHeightProperty().bind(imagePane.heightProperty());
 
-				if (cell == Cell.EMPTY)
+				if (currentCell == Cell.EMPTY)
 				{
 					imagePane.setOnMouseClicked(e ->
 					{
@@ -132,7 +132,7 @@ public class JavaFXReversiView implements IView, Initializable
 					{
 						try
 						{
-							boardGame.checkMoveIsLegal(xTemp, yTemp);
+							boardGame.checkMoveIsLegal(xTemp, yTemp, currentPlayerPawn);
 							imageView.setImage(new Image("/fr/polytech/reversi/view/resources/images/grey_pawn.png"));
 						}
 						catch (BoardGameException e2)

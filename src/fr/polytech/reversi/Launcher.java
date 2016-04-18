@@ -25,6 +25,7 @@ public class Launcher extends Application
 		final FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fr/polytech/reversi/view/resources/views/Reversi.fxml"));
 		final Parent root = loader.load();
 		final BoardGame boardGame = new BoardGame(8, 8, new HumanPlayer(Cell.BLACK_PAWN), new HumanPlayer(Cell.WHITE_PAWN), loader.getController());
+		// final BoardGame boardGame = new BoardGame(8, 8, new HumanPlayer(Cell.BLACK_PAWN), new ComputerPlayer(Cell.WHITE_PAWN), loader.getController());
 		boardGame.init();
 
 		primaryStage.setScene(new Scene(root));
