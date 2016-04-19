@@ -19,11 +19,6 @@ public class ComputerPlayer implements IPlayer
 	private static final int ABORT_TIME_THRESHOLD = 3000; // 3 seconds
 
 	/**
-	 * The max depth.
-	 */
-	private static final int MAX_DEPTH = 6;
-
-	/**
 	 * The board game size.
 	 */
 	private static final int SIZE = 10;
@@ -37,6 +32,11 @@ public class ComputerPlayer implements IPlayer
 	 * The opponent representation.
 	 */
 	private final Cell opponentRepresentation;
+
+	/**
+	 * The max depth.
+	 */
+	private final int maxDepth;
 
 	/**
 	 * The start time.
@@ -53,10 +53,13 @@ public class ComputerPlayer implements IPlayer
 	 * 
 	 * @param cellRepresentation
 	 *            The cell representation.
+	 * @param maxDepth
+	 *            The max depth.
 	 */
-	public ComputerPlayer(Cell cellRepresentation)
+	public ComputerPlayer(Cell cellRepresentation, int maxDepth)
 	{
 		this.ownRepresentation = cellRepresentation;
+		this.maxDepth = maxDepth;
 		this.opponentRepresentation = (this.ownRepresentation == Cell.BLACK_PAWN ? Cell.WHITE_PAWN : Cell.BLACK_PAWN);
 	}
 
@@ -87,7 +90,7 @@ public class ComputerPlayer implements IPlayer
 	 */
 	private double maxValue(BoardGame boardGame, double alpha, double beta, int depth)
 	{
-		if (depth >= MAX_DEPTH || !isTimerOk() || boardGame.gameOver())
+		if (depth >= this.maxDepth || !isTimerOk() || boardGame.gameOver())
 		{
 			return evaluate(boardGame);
 		}
@@ -154,7 +157,7 @@ public class ComputerPlayer implements IPlayer
 	 */
 	private double minValue(BoardGame boardGame, double alpha, double beta, int depth)
 	{
-		if (depth >= MAX_DEPTH || !isTimerOk() || boardGame.gameOver())
+		if (depth >= this.maxDepth || !isTimerOk() || boardGame.gameOver())
 		{
 			return evaluate(boardGame);
 		}
@@ -203,8 +206,7 @@ public class ComputerPlayer implements IPlayer
 	 */
 	private boolean isTimerOk()
 	{
-		return true;
-		// return (System.currentTimeMillis() - this.startTime) < ABORT_TIME_THRESHOLD;
+		return (System.currentTimeMillis() - this.startTime) < ABORT_TIME_THRESHOLD;
 	}
 
 	/**

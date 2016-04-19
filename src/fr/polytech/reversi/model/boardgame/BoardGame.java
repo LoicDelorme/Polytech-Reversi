@@ -38,7 +38,7 @@ public class BoardGame
 	/**
 	 * The board game.
 	 */
-	private final Cell[][] boardGame;
+	private Cell[][] boardGame;
 
 	/**
 	 * The number of cells remaining.
@@ -104,8 +104,8 @@ public class BoardGame
 	{
 		this.boardGame = boardGame.getBoardGame();
 		this.nbCellsRemaining = boardGame.getNbCellsRemaining();
-		this.playerOne = null;
-		this.playerTwo = null;
+		this.playerOne = boardGame.getPlayerOne();
+		this.playerTwo = boardGame.getPlayerTwo();
 		this.moves = null;
 		this.reversiView = null;
 	}
@@ -200,8 +200,7 @@ public class BoardGame
 
 		if (this.currentPlayer.getPlayerType() == PlayerType.COMPUTER)
 		{
-			final Position nextChoice = this.currentPlayer.getNextChoice(new BoardGame(this));
-			markCell(nextChoice);
+			markCell(this.currentPlayer.getNextChoice(new BoardGame(this)));
 		}
 	}
 
@@ -456,7 +455,13 @@ public class BoardGame
 	 */
 	public Cell[][] getBoardGame()
 	{
-		return this.boardGame.clone();
+		final Cell[][] clonedBoardGame = new Cell[this.boardGame.length][this.boardGame[0].length];
+		for (int offset = 0; offset < this.boardGame.length; offset++)
+		{
+			clonedBoardGame[offset] = this.boardGame[offset].clone();
+		}
+
+		return clonedBoardGame;
 	}
 
 	/**
@@ -477,6 +482,26 @@ public class BoardGame
 	public IPlayer getCurrentPlayer()
 	{
 		return this.currentPlayer;
+	}
+
+	/**
+	 * Get the player one.
+	 * 
+	 * @return The player one.
+	 */
+	public IPlayer getPlayerOne()
+	{
+		return this.playerOne;
+	}
+
+	/**
+	 * Get the player two.
+	 * 
+	 * @return The player two.
+	 */
+	public IPlayer getPlayerTwo()
+	{
+		return this.playerTwo;
 	}
 
 	/////////////////////////////////////////// USED FOR AI ///////////////////////////////////////////
@@ -515,13 +540,7 @@ public class BoardGame
 	 */
 	public void resetBoardGame(Cell[][] boardGame)
 	{
-		for (int x = 0; x < boardGame.length; x++)
-		{
-			for (int y = 0; y < boardGame[0].length; y++)
-			{
-				this.boardGame[x][y] = boardGame[x][y];
-			}
-		}
+		this.boardGame = boardGame;
 	}
 	/////////////////////////////////////////// END ///////////////////////////////////////////
 }
