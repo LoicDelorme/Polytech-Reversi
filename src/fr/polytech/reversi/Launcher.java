@@ -21,9 +21,9 @@ import javafx.stage.Stage;
 public class Launcher extends Application
 {
 	/**
-	 * The difficulty (EASY 2, NORMAL 4, HARD 6).
+	 * The difficulty (EASY 1, NORMAL 3, HARD 5).
 	 */
-	public static final int DIFFICULTY = 4;
+	public static final int DIFFICULTY = 3;
 
 	@Override
 	public void start(Stage primaryStage) throws IOException

@@ -218,7 +218,7 @@ public class ComputerPlayer implements IPlayer
 	 */
 	private double evaluate(BoardGame boardGame)
 	{
-		return boardGame.getNbCellsByPawn(this.ownRepresentation) - boardGame.getNbCellsByPawn(this.opponentRepresentation);
+		return boardGame.getNbPointsByPawn(this.ownRepresentation) - boardGame.getNbPointsByPawn(this.opponentRepresentation);
 	}
 
 	/**

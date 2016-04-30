@@ -36,6 +36,11 @@ public class BoardGame
 	private static final int[] DY = { -1, -1, -1, 0, 0, 1, 1, 1 };
 
 	/**
+	 * The evaluation board.
+	 */
+	private static final int[][] EVALUATION_BOARD = new int[][] { { 50, -20, 5, 5, 5, 5, -20, 50 }, { -20, -20, 5, 5, 5, 5, -20, -20 }, { 5, 5, 5, 5, 5, 5, 5, 5 }, { 5, 5, 5, 5, 5, 5, 5, 5 }, { 5, 5, 5, 5, 5, 5, 5, 5 }, { 5, 5, 5, 5, 5, 5, 5, 5 }, { -20, -20, 5, 5, 5, 5, -20, -20 }, { 50, -20, 5, 5, 5, 5, -20, 50 } };
+
+	/**
 	 * The board game.
 	 */
 	private Cell[][] boardGame;
@@ -446,6 +451,30 @@ public class BoardGame
 		}
 
 		return nbCells;
+	}
+
+	/**
+	 * Get the number of points for a specific pawn.
+	 * 
+	 * @param pawn
+	 *            The specific pawn.
+	 * @return The number of points corresponding to the spawn.
+	 */
+	public int getNbPointsByPawn(Cell pawn)
+	{
+		int nbPoints = 0;
+		for (int x = 0; x < this.boardGame.length; x++)
+		{
+			for (int y = 0; y < this.boardGame[0].length; y++)
+			{
+				if (this.boardGame[x][y] == pawn)
+				{
+					nbPoints += EVALUATION_BOARD[x][y];
+				}
+			}
+		}
+
+		return nbPoints;
 	}
 
 	/**
